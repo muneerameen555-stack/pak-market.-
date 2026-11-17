@@ -1,0 +1,1836 @@
+ <!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#002f34">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Park Market">
+    <title>Park Market 🇵🇰 - Pakistan's Buy & Sell Marketplace</title>
+
+    <!-- Dynamic PWA Web Manifest Link -->
+    <link id="pwaManifestLink" rel="manifest" href="manifest.json">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        olxDark: '#002f34',
+                        olxTeal: '#004c54',
+                        olxYellow: '#ffce32',
+                        pakGreen: {
+                            50: '#eefcf4',
+                            100: '#d4f8e3',
+                            500: '#006633',
+                            600: '#005228',
+                            700: '#002f34',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        .dark ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #002f34; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 12px); }
+
+        @keyframes splashPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+        @keyframes splashBar {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        .animate-splash-logo {
+            animation: splashPulse 1.3s ease-in-out infinite;
+        }
+        .animate-splash-bar {
+            animation: splashBar 1.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-950 text-gray-800 dark:text-gray-100 antialiased min-h-screen flex flex-col justify-between pb-20 md:pb-0 transition-colors duration-200">
+
+    <!-- Animated Logo Splash Screen -->
+    <div id="splashScreen" onclick="dismissSplashScreen()" class="fixed inset-0 z-[70] bg-gradient-to-br from-olxDark via-olxTeal to-pakGreen-600 flex flex-col items-center justify-center text-white px-6 transition-opacity duration-500 cursor-pointer">
+        <div class="animate-splash-logo text-center space-y-3">
+            <div class="inline-flex items-center gap-1 bg-olxYellow text-olxDark px-5 py-3 rounded-2xl shadow-2xl font-black text-3xl sm:text-4xl tracking-tight">
+                PARK<span class="text-olxDark bg-white/90 px-2 py-0.5 rounded-lg ml-1 text-2xl sm:text-3xl">MARKET</span>
+            </div>
+            <p class="text-xs sm:text-sm font-bold tracking-widest uppercase text-olxYellow">Pakistan's Local Marketplace 🇵🇰</p>
+        </div>
+        <div class="w-48 h-1.5 bg-white/20 rounded-full overflow-hidden mt-8">
+            <div class="h-full bg-olxYellow rounded-full animate-splash-bar"></div>
+        </div>
+        <span class="text-[11px] text-white/60 mt-4">Tap anywhere to skip</span>
+    </div>
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-olxDark text-white text-[11px] sm:text-xs py-1.5 px-3 border-b border-white/10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="hidden sm:flex items-center gap-1.5"><i class="fa-solid fa-store text-olxYellow"></i> Park Market Official App</div>
+            <div class="mx-auto sm:mx-0 font-medium text-center truncate">🇵🇰 Park Market — Buy, Sell & Chat Directly Across Pakistan!</div>
+            <button id="topInstallBtn" onclick="triggerInstallPrompt()" class="hidden items-center gap-1 bg-olxYellow text-olxDark font-extrabold px-2.5 py-0.5 rounded-full text-[10px]">
+                <i class="fa-solid fa-download"></i> Install App
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Sticky App Header -->
+    <header class="sticky top-0 z-40 bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-3">
+
+            <!-- Brand Logo -->
+            <a href="#home" onclick="navigateToFolder('home'); return false;" class="flex items-center gap-2 group shrink-0">
+                <div class="bg-olxDark text-olxYellow px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl shadow-sm group-hover:bg-olxTeal transition font-black text-sm sm:text-lg tracking-tight">
+                    PARK<span class="text-white">MARKET</span>
+                </div>
+                <div class="hidden xl:block">
+                    <span class="text-base font-black tracking-tight text-olxDark dark:text-white leading-none block">Park Market 🇵🇰</span>
+                    <span class="block text-[9px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-widest mt-0.5">Buy & Sell Locally</span>
+                </div>
+            </a>
+
+            <!-- City Selector + Search Bar (Desktop) -->
+            <div class="hidden md:flex flex-1 max-w-3xl items-center gap-2">
+                <div class="relative w-44 shrink-0">
+                    <i class="fa-solid fa-location-dot text-olxDark dark:text-olxYellow absolute left-3.5 top-1/2 -translate-y-1/2 text-sm"></i>
+                    <select id="cityFilterDesktop" onchange="syncCityFilter(this.value)" class="w-full pl-9 pr-3 py-2.5 bg-white dark:bg-gray-800 border-2 border-olxDark/20 dark:border-gray-700 focus:border-olxDark dark:focus:border-olxYellow rounded-lg text-sm font-semibold text-olxDark dark:text-white focus:outline-none">
+                        <option value="All Cities">All Pakistan</option>
+                        <option value="Karachi">Karachi</option>
+                        <option value="Lahore">Lahore</option>
+                        <option value="Islamabad">Islamabad</option>
+                        <option value="Rawalpindi">Rawalpindi</option>
+                        <option value="Faisalabad">Faisalabad</option>
+                        <option value="Multan">Multan</option>
+                    </select>
+                </div>
+
+                <div class="relative flex-1">
+                    <input type="text" id="searchInput" oninput="filterAds()" placeholder="Find Cars, Mobile Phones, Plots, Bikes & more on Park Market..." class="w-full pl-4 pr-12 py-2.5 bg-white dark:bg-gray-800 dark:text-white border-2 border-olxDark/20 dark:border-gray-700 focus:border-olxDark dark:focus:border-olxYellow rounded-lg text-sm transition focus:outline-none">
+                    <button onclick="filterAds()" class="absolute right-0 top-0 bottom-0 bg-olxDark text-white px-4 rounded-r-lg hover:bg-olxTeal transition text-sm">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Controls -->
+            <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+                <button onclick="toggleDarkMode()" class="p-2 text-olxDark dark:text-olxYellow hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full active:scale-95 transition" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
+                    <i id="themeIconDesktop" class="fa-solid fa-moon text-base sm:text-lg"></i>
+                </button>
+
+                <button onclick="toggleWishlistModal()" class="relative p-2 text-olxDark dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full active:scale-95 transition" title="Saved Ads">
+                    <i class="fa-regular fa-heart text-lg sm:text-xl"></i>
+                    <span id="wishlistBadge" class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-900">0</span>
+                </button>
+
+                <button onclick="showMyAds()" class="hidden lg:inline-flex items-center gap-1.5 text-olxDark dark:text-gray-200 hover:underline font-bold text-xs px-2 py-1.5">
+                    <i class="fa-solid fa-rectangle-list"></i> My Ads (<span id="myAdsCount">0</span>)
+                </button>
+
+                <button onclick="toggleAuthModal()" class="hidden sm:flex items-center gap-1.5 text-olxDark dark:text-olxYellow hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-lg font-bold text-xs sm:text-sm transition underline underline-offset-4">
+                    <span id="authButtonText">Login</span>
+                </button>
+
+                <button onclick="openPostAdModal()" class="flex items-center gap-1.5 bg-white dark:bg-gray-800 border-[3px] border-olxDark dark:border-olxYellow hover:bg-olxYellow dark:hover:bg-olxYellow dark:hover:text-olxDark active:scale-95 text-olxDark dark:text-olxYellow px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-black text-xs sm:text-sm uppercase tracking-wide transition shadow-sm">
+                    <i class="fa-solid fa-plus text-xs sm:text-sm"></i>
+                    <span>SELL</span>
+                </button>
+
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-olxDark dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl active:scale-95 transition" aria-label="Open Categories Menu">
+                    <i id="mobileMenuIcon" class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search & City Bar (Mobile) -->
+        <div class="md:hidden px-3 pb-2.5 flex items-center gap-2">
+            <select id="cityFilterMobile" onchange="syncCityFilter(this.value)" class="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full px-3 py-2 text-xs font-bold text-olxDark dark:text-white focus:outline-none max-w-[115px]">
+                <option value="All Cities">📍 All Cities</option>
+                <option value="Karachi">Karachi</option>
+                <option value="Lahore">Lahore</option>
+                <option value="Islamabad">Islamabad</option>
+                <option value="Rawalpindi">Rawalpindi</option>
+                <option value="Faisalabad">Faisalabad</option>
+                <option value="Multan">Multan</option>
+            </select>
+            <div class="relative flex-1">
+                <input type="text" id="searchInputMobile" oninput="filterAdsMobile()" placeholder="Search Corolla, iPhone, Plot..." class="w-full pl-3.5 pr-9 py-2 bg-gray-100 dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 rounded-full text-xs focus:outline-none focus:bg-white dark:focus:bg-gray-700 focus:border-olxDark transition">
+                <button onclick="filterAdsMobile()" class="absolute right-1 top-1/2 -translate-y-1/2 bg-olxDark text-white w-7 h-7 rounded-full flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Swipeable Mobile Category Pills -->
+        <div id="mobileCategoryPills" class="md:hidden bg-olxDark text-white px-3 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
+            <button data-folder="home" onclick="navigateToFolder('home')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-olxYellow text-olxDark text-xs font-extrabold flex items-center gap-1.5 shrink-0 transition">
+                <i class="fa-solid fa-border-all"></i> All Ads
+            </button>
+            <button data-folder="Mobiles" onclick="navigateToFolder('Mobiles')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                📱 Mobiles
+            </button>
+            <button data-folder="Cars & Bikes" onclick="navigateToFolder('Cars & Bikes')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                🚗 Cars & Bikes
+            </button>
+            <button data-folder="Property & Plots" onclick="navigateToFolder('Property & Plots')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                🏠 Property
+            </button>
+            <button data-folder="Electronics" onclick="navigateToFolder('Electronics')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                💻 Electronics
+            </button>
+            <button data-folder="Fashion & Lawn" onclick="navigateToFolder('Fashion & Lawn')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                👗 Fashion & Lawn
+            </button>
+            <button data-folder="Home & Furniture" onclick="navigateToFolder('Home & Furniture')" class="mobile-pill px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-xs font-semibold shrink-0 transition">
+                🛋️ Furniture
+            </button>
+        </div>
+
+        <!-- Desktop Category Navigation Bar -->
+        <nav class="bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 text-olxDark dark:text-gray-200 hidden md:block transition-colors">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs lg:text-sm font-semibold">
+                <div class="flex items-center space-x-1 overflow-x-auto py-2">
+                    <a href="#home" onclick="navigateToFolder('home'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition flex items-center gap-1.5 font-extrabold text-olxDark dark:text-olxYellow"><i class="fa-solid fa-border-all"></i> ALL CATEGORIES</a>
+                    <a href="#mobiles" onclick="navigateToFolder('Mobiles'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Mobiles</a>
+                    <a href="#cars-&-bikes" onclick="navigateToFolder('Cars & Bikes'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Cars & Bikes</a>
+                    <a href="#property-&-plots" onclick="navigateToFolder('Property & Plots'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Property & Plots</a>
+                    <a href="#electronics" onclick="navigateToFolder('Electronics'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Electronics</a>
+                    <a href="#fashion-&-lawn" onclick="navigateToFolder('Fashion & Lawn'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Fashion & Lawn</a>
+                    <a href="#home-&-furniture" onclick="navigateToFolder('Home & Furniture'); return false;" class="px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">Home & Furniture</a>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button id="desktopInstallBtn" onclick="triggerInstallPrompt()" class="hidden bg-emerald-600 text-white px-3 py-1 rounded-md font-bold text-xs hover:bg-emerald-700 transition">
+                        <i class="fa-solid fa-download mr-1"></i> Install App
+                    </button>
+                    <button onclick="openPostAdModal()" class="bg-olxYellow text-olxDark px-3 py-1 rounded-md font-extrabold text-xs uppercase hover:brightness-95 transition">+ Post Free Ad</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Categories Drawer Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-900 border-t dark:border-gray-800 px-3 py-3 space-y-1 shadow-2xl max-h-[75vh] overflow-y-auto">
+            <div class="flex items-center justify-between px-3 pb-2 border-b dark:border-gray-800">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-olxDark dark:text-olxYellow">📁 Browse & Account</span>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleDarkMode()" class="text-xs font-bold text-olxDark dark:text-olxYellow flex items-center gap-1">
+                        <i id="themeIconMobile" class="fa-solid fa-moon"></i> Theme
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="text-xs text-gray-400 hover:text-gray-600 font-bold">Close ✕</button>
+                </div>
+            </div>
+            <a href="#home" onclick="navigateToFolder('home'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl font-semibold text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-border-all text-olxDark dark:text-olxYellow w-5"></i> All Classified Ads</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#mobiles" onclick="navigateToFolder('Mobiles'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-mobile-screen text-olxDark dark:text-olxYellow w-5"></i> Mobiles & Tablets</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#cars-&-bikes" onclick="navigateToFolder('Cars & Bikes'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-car text-olxDark dark:text-olxYellow w-5"></i> Cars & Motorcycles</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#property-&-plots" onclick="navigateToFolder('Property & Plots'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-house text-olxDark dark:text-olxYellow w-5"></i> Property & Plots</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#electronics" onclick="navigateToFolder('Electronics'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-laptop text-olxDark dark:text-olxYellow w-5"></i> Electronics & Appliances</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#fashion-&-lawn" onclick="navigateToFolder('Fashion & Lawn'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-shirt text-olxDark dark:text-olxYellow w-5"></i> Fashion & Lawn</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <a href="#home-&-furniture" onclick="navigateToFolder('Home & Furniture'); toggleMobileMenu(); return false;" class="flex items-center justify-between py-2.5 px-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl text-sm">
+                <span class="flex items-center gap-3"><i class="fa-solid fa-couch text-olxDark dark:text-olxYellow w-5"></i> Home & Furniture</span>
+                <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+            </a>
+            <div class="border-t dark:border-gray-800 pt-2.5 mt-2 grid grid-cols-2 gap-2">
+                <button onclick="toggleAuthModal(); toggleMobileMenu();" class="bg-gray-100 dark:bg-gray-800 text-olxDark dark:text-white font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-user"></i> <span id="mobileAuthLabel">Login / Google</span>
+                </button>
+                <button onclick="openPostAdModal(); toggleMobileMenu();" class="bg-olxYellow text-olxDark font-extrabold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> Post Free Ad
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sticky Folder Breadcrumb & Back History Bar -->
+    <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b dark:border-gray-800 py-2 px-3 sm:px-6 sticky top-[128px] md:top-[108px] z-30 transition-colors">
+        <div class="max-w-7xl mx-auto flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 gap-2">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap">
+                <button onclick="handleBrowserBack()" class="bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 border border-gray-300 dark:border-gray-700 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 text-olxDark dark:text-white transition shrink-0">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+                <span class="text-gray-400">/</span>
+                <div id="breadcrumbTrail" class="flex items-center gap-1.5 font-bold text-olxDark dark:text-olxYellow text-[11px] sm:text-xs">
+                    <span class="cursor-pointer hover:underline" onclick="navigateToFolder('home')">Home</span>
+                </div>
+            </div>
+            <div class="hidden sm:block text-gray-400 font-mono text-[11px] shrink-0">
+                Path: <span id="folderPathText">/park-market/home</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Banner Section -->
+    <section id="heroSection" class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:mt-6">
+        <div class="bg-gradient-to-r from-olxDark via-olxTeal to-pakGreen-600 rounded-2xl sm:rounded-3xl text-white p-5 sm:p-10 lg:p-12 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
+            <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-olxYellow/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="z-10 max-w-xl space-y-3 sm:space-y-4 text-center md:text-left">
+                <div class="inline-flex items-center gap-1.5 bg-olxYellow text-olxDark px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold uppercase tracking-wider">
+                    <i class="fa-solid fa-store"></i> Park Market Mobile App
+                </div>
+                <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+                    Buy, Sell & Find Anything on Park Market!
+                </h1>
+                <p class="text-gray-200 text-xs sm:text-base leading-relaxed">
+                    Browse cars, PTA mobiles, plots, electronics, and lawn suits—or post your ad with up to 10 photos across Pakistan.
+                </p>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-2.5 sm:gap-3 pt-1">
+                    <button onclick="openPostAdModal()" class="bg-olxYellow hover:brightness-95 active:scale-95 text-olxDark font-extrabold px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl shadow-lg transition flex items-center gap-2 text-xs sm:text-sm">
+                        <i class="fa-solid fa-plus-circle"></i> <span>Post Your Ad Free</span>
+                    </button>
+                    <button onclick="triggerInstallPrompt()" class="bg-white/15 hover:bg-white/25 active:scale-95 text-white font-bold px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl transition flex items-center gap-2 text-xs sm:text-sm">
+                        <i class="fa-solid fa-download"></i> <span>Install Mobile App</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Category Shortcut Cards -->
+            <div class="z-10 grid grid-cols-2 gap-2.5 sm:gap-4 w-full md:w-auto">
+                <div onclick="navigateToFolder('Mobiles')" class="cursor-pointer bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 text-center flex flex-col items-center justify-center transition">
+                    <i class="fa-solid fa-mobile-screen text-2xl sm:text-3xl text-olxYellow mb-1.5"></i>
+                    <h3 class="font-bold text-sm sm:text-lg">Mobiles</h3>
+                    <p class="text-[10px] sm:text-xs text-gray-200">iPhone, Samsung & PTA</p>
+                </div>
+                <div onclick="navigateToFolder('Cars & Bikes')" class="cursor-pointer bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 text-center flex flex-col items-center justify-center transition">
+                    <i class="fa-solid fa-car text-2xl sm:text-3xl text-olxYellow mb-1.5"></i>
+                    <h3 class="font-bold text-sm sm:text-lg">Cars & Bikes</h3>
+                    <p class="text-[10px] sm:text-xs text-gray-200">Used & Zero-Meter</p>
+                </div>
+                <div onclick="navigateToFolder('Property & Plots')" class="cursor-pointer bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 text-center flex flex-col items-center justify-center transition">
+                    <i class="fa-solid fa-house text-2xl sm:text-3xl text-olxYellow mb-1.5"></i>
+                    <h3 class="font-bold text-sm sm:text-lg">Property</h3>
+                    <p class="text-[10px] sm:text-xs text-gray-200">Houses, Flats & Plots</p>
+                </div>
+                <div onclick="navigateToFolder('Electronics')" class="cursor-pointer bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 text-center flex flex-col items-center justify-center transition">
+                    <i class="fa-solid fa-laptop text-2xl sm:text-3xl text-olxYellow mb-1.5"></i>
+                    <h3 class="font-bold text-sm sm:text-lg">Electronics</h3>
+                    <p class="text-[10px] sm:text-xs text-gray-200">ACs, Laptops & TVs</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="catalog" class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 my-6 sm:my-10 flex-1 w-full">
+
+        <!-- Catalog + Price Range Filter View -->
+        <div id="catalogViewWrapper">
+            <div class="flex flex-col gap-3 mb-5 sm:mb-7 pb-4 border-b border-gray-200 dark:border-gray-800">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-3">
+                    <div>
+                        <span class="text-olxDark dark:text-olxYellow font-bold text-[11px] sm:text-xs uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-bullhorn text-emerald-600"></i> Fresh Park Market Listings
+                        </span>
+                        <h2 id="catalogFolderTitle" class="text-xl sm:text-3xl font-black text-olxDark dark:text-white mt-0.5">Fresh Recommendations</h2>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+                        <select id="categoryFilter" onchange="navigateToFolder(this.value)" class="w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-xs sm:text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-olxDark shadow-sm font-semibold text-olxDark dark:text-white">
+                            <option value="home">All Categories</option>
+                            <option value="Mobiles">Mobiles</option>
+                            <option value="Cars & Bikes">Cars & Bikes</option>
+                            <option value="Property & Plots">Property & Plots</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Fashion & Lawn">Fashion & Lawn</option>
+                            <option value="Home & Furniture">Home & Furniture</option>
+                        </select>
+
+                        <select id="conditionFilter" onchange="applyAdFilters()" class="w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-xs sm:text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-olxDark shadow-sm font-semibold text-olxDark dark:text-white">
+                            <option value="All">Condition: All</option>
+                            <option value="Used">Used</option>
+                            <option value="New">New</option>
+                            <option value="Open Box">Open Box</option>
+                        </select>
+
+                        <select id="sortBy" onchange="applyAdFilters()" class="col-span-2 sm:col-span-1 w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-xs sm:text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-olxDark shadow-sm font-semibold text-olxDark dark:text-white">
+                            <option value="featured">Sort: Featured</option>
+                            <option value="low-high">Price: Low to High</option>
+                            <option value="high-low">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Price Range Filter Row -->
+                <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2.5 shadow-sm">
+                    <div class="flex items-center gap-2 text-xs font-extrabold text-olxDark dark:text-olxYellow">
+                        <i class="fa-solid fa-tag"></i>
+                        <span>Price Range (Rs.):</span>
+                    </div>
+                    <div class="flex flex-1 sm:flex-initial items-center gap-2">
+                        <input type="number" id="minPriceInput" min="0" oninput="applyAdFilters()" placeholder="Min Rs." class="w-full sm:w-32 px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-semibold text-olxDark dark:text-white focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                        <span class="text-gray-400 font-bold text-xs">-</span>
+                        <input type="number" id="maxPriceInput" min="0" oninput="applyAdFilters()" placeholder="Max Rs." class="w-full sm:w-32 px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-semibold text-olxDark dark:text-white focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                    </div>
+                    <button onclick="resetFilters()" class="text-xs font-bold text-gray-500 hover:text-olxDark dark:hover:text-olxYellow px-2.5 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <div id="adsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5"></div>
+
+            <div id="emptyState" class="hidden text-center py-12 sm:py-16 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border dark:border-gray-800 mt-4 px-4">
+                <i class="fa-solid fa-magnifying-glass-minus text-4xl sm:text-5xl text-gray-300 dark:text-gray-600 mb-3"></i>
+                <h3 class="text-base sm:text-lg font-bold text-gray-700 dark:text-gray-200">No matching ads found</h3>
+                <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Try adjusting your price range, city, condition filter, or post your own ad.</p>
+                <div class="flex items-center justify-center gap-2 mt-4">
+                    <button onclick="resetFilters()" class="bg-olxDark text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold hover:bg-olxTeal transition">Reset Filters</button>
+                    <button onclick="openPostAdModal()" class="bg-olxYellow text-olxDark px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition">+ Post Ad</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Ad Detail + Related Ads View -->
+        <div id="adFolderView" class="hidden space-y-6 sm:space-y-10">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b dark:border-gray-800">
+                <button onclick="handleBrowserBack()" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 border border-gray-300 dark:border-gray-700 text-olxDark dark:text-white px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-sm flex items-center gap-2 transition">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Ads
+                </button>
+                <div class="text-[10px] sm:text-xs font-mono bg-emerald-50 dark:bg-gray-800 text-olxDark dark:text-olxYellow px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-gray-700 truncate max-w-[220px] sm:max-w-none" id="adFolderSlugBadge">
+                    /park-market/ad
+                </div>
+            </div>
+
+            <div id="adDetailContent" class="bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 dark:border-gray-800 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 p-4 sm:p-8"></div>
+
+            <div class="pt-2 sm:pt-4">
+                <div class="flex items-center justify-between mb-4 sm:mb-6">
+                    <div>
+                        <span class="text-emerald-700 dark:text-olxYellow font-bold text-[10px] sm:text-xs uppercase tracking-wider">Similar Listings</span>
+                        <h3 class="text-lg sm:text-2xl font-black text-olxDark dark:text-white">More Ads in This Category</h3>
+                    </div>
+                    <button id="viewAllCategoryBtn" class="text-xs sm:text-sm font-bold text-olxDark dark:text-olxYellow hover:underline">View All &rarr;</button>
+                </div>
+                <div id="relatedAdsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5"></div>
+            </div>
+        </div>
+
+        <!-- Seller Profile View -->
+        <div id="sellerProfileView" class="hidden space-y-6 sm:space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b dark:border-gray-800">
+                <button onclick="handleBrowserBack()" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 border border-gray-300 dark:border-gray-700 text-olxDark dark:text-white px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-sm flex items-center gap-2 transition">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </button>
+                <div class="text-[10px] sm:text-xs font-mono bg-emerald-50 dark:bg-gray-800 text-olxDark dark:text-olxYellow px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-gray-700" id="sellerSlugBadge">
+                    /park-market/seller
+                </div>
+            </div>
+
+            <div id="sellerProfileCard" class="bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 dark:border-gray-800 p-5 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-5"></div>
+
+            <div>
+                <h3 id="sellerAdsHeading" class="text-lg sm:text-2xl font-black text-olxDark dark:text-white mb-4">Active Ads by Seller</h3>
+                <div id="sellerAdsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 pt-10 sm:pt-14 pb-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <span class="bg-olxYellow text-olxDark px-2.5 py-1 rounded-lg font-black text-sm">PARK MARKET</span>
+                    <span class="text-lg font-black text-white">🇵🇰</span>
+                </div>
+                <p class="text-xs sm:text-sm text-gray-400 leading-relaxed">
+                    Park Market — Pakistan's local classifieds marketplace & mobile app for buying and selling mobiles, cars, property, electronics, and more.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3 border-b border-gray-800 pb-2">Popular Categories</h4>
+                <ul class="space-y-2 text-xs sm:text-sm text-gray-400">
+                    <li><a href="#mobiles" onclick="navigateToFolder('Mobiles'); return false;" class="hover:text-olxYellow transition">Mobiles</a></li>
+                    <li><a href="#cars-&-bikes" onclick="navigateToFolder('Cars & Bikes'); return false;" class="hover:text-olxYellow transition">Cars & Bikes</a></li>
+                    <li><a href="#property-&-plots" onclick="navigateToFolder('Property & Plots'); return false;" class="hover:text-olxYellow transition">Property & Plots</a></li>
+                    <li><a href="#electronics" onclick="navigateToFolder('Electronics'); return false;" class="hover:text-olxYellow transition">Electronics</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3 border-b border-gray-800 pb-2">App & Seller Actions</h4>
+                <div class="space-y-2">
+                    <button onclick="openPostAdModal()" class="w-full bg-olxYellow text-olxDark font-extrabold py-2.5 px-4 rounded-xl text-xs hover:brightness-95 transition">
+                        + Post Free Ad on Park Market
+                    </button>
+                    <button onclick="triggerInstallPrompt()" class="w-full bg-gray-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs hover:bg-gray-700 transition">
+                        Install Mobile App (PWA)
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 border-t border-gray-800 text-center text-xs text-gray-500">
+            &copy; 2026 Park Market 🇵🇰. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- Post Free Ad Modal -->
+    <div id="postAdModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-end sm:items-center justify-center min-h-screen sm:px-4 pt-4 sm:pb-20 text-center">
+            <div class="fixed inset-0 transition-opacity bg-black/60 backdrop-blur-sm" onclick="closePostAdModal()"></div>
+            <div class="relative z-10 w-full max-w-xl p-5 sm:p-6 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 dark:text-white shadow-2xl rounded-t-3xl sm:rounded-3xl pb-safe max-h-[92vh] overflow-y-auto">
+                <div class="flex items-center justify-between pb-3 border-b dark:border-gray-800 mb-4">
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-olxYellow bg-emerald-50 dark:bg-gray-800 px-2 py-0.5 rounded">Free Ad • Up to 10 Photos</span>
+                        <h3 class="text-lg sm:text-xl font-black text-olxDark dark:text-white mt-0.5">Post Your Ad on Park Market</h3>
+                    </div>
+                    <button onclick="closePostAdModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+
+                <form id="postAdForm" onsubmit="handlePostAdSubmit(event)" class="space-y-3.5">
+                    <div>
+                        <label class="block text-xs font-bold text-olxDark dark:text-gray-300 uppercase mb-1">Ad Title *</label>
+                        <input type="text" id="adTitle" required placeholder="e.g. Toyota Corolla GLi 2018 or iPhone 13 PTA" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-olxDark dark:text-gray-300 uppercase mb-1">Category *</label>
+                            <select id="adCategory" required class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                                <option value="Mobiles">Mobiles</option>
+                                <option value="Cars & Bikes">Cars & Bikes</option>
+                                <option value="Property & Plots">Property & Plots</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Fashion & Lawn">Fashion & Lawn</option>
+                                <option value="Home & Furniture">Home & Furniture</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-olxDark dark:text-gray-300 uppercase mb-1">City *</label>
+                            <select id="adCity" required class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                                <option value="Karachi">Karachi</option>
+                                <option value="Lahore">Lahore</option>
+                                <option value="Islamabad">Islamabad</option>
+                                <option value="Rawalpindi">Rawalpindi</option>
+                                <option value="Faisalabad">Faisalabad</option>
+                                <option value="Multan">Multan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-olxDark dark:text-gray-300 uppercase mb-1">Price (Rs.) *</label>
+                            <input type="number" id="adPrice" required min="1" placeholder="e.g. 45000" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-olxDark dark:text-gray-300 uppercase mb-1">Condition *</label>
+                            <select id="adCondition" required class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                                <option value="Used">Used</option>
+                                <option value="New">New</option>
+                                <option value="Open Box">Open Box</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-olxDark dark:text-gray-300 uppercase mb-1">Seller Name *</label>
+                            <input type="text" id="adSeller" required placeholder="e.g. Muneer Ameen" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-olxDark dark:text-gray-300 uppercase mb-1">Phone / WhatsApp *</label>
+                            <input type="text" id="adPhone" required placeholder="03128488439" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                        </div>
+                    </div>
+
+                    <!-- Multi-Image Upload (5 to 10 Photos) -->
+                    <div class="bg-gray-50 dark:bg-gray-800/70 p-3.5 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-bold text-olxDark dark:text-olxYellow uppercase">
+                                <i class="fa-solid fa-images mr-1"></i> Upload Photos (5 to 10 Images)
+                            </label>
+                            <span id="photoCountLabel" class="text-[11px] font-bold text-gray-500 dark:text-gray-400">0 / 10 selected</span>
+                        </div>
+                        <input type="file" id="adImageFiles" accept="image/*" multiple onchange="handleMultiImageSelect(this)" class="block w-full text-xs text-gray-600 dark:text-gray-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-olxDark file:text-olxYellow hover:file:bg-olxTeal cursor-pointer">
+                        <div id="imagePreviewGrid" class="grid grid-cols-5 gap-2 empty:hidden pt-1"></div>
+
+                        <div class="pt-1">
+                            <label class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1">Or paste Photo URL (Optional)</label>
+                            <input type="url" id="adImage" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-lg text-xs focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-olxDark dark:text-gray-300 uppercase mb-1">Description *</label>
+                        <textarea id="adDescription" rows="3" required placeholder="Mention model, features, location area, demand or exchange details..." class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-olxDark hover:bg-olxTeal text-olxYellow font-black py-3.5 rounded-xl transition shadow-md text-sm uppercase tracking-wide">
+                        Publish Ad on Park Market
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saved Ads Modal -->
+    <div id="wishlistModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-end sm:items-center justify-center min-h-screen sm:px-4 pt-4 sm:pb-20 text-center">
+            <div class="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm" onclick="toggleWishlistModal()"></div>
+            <div class="relative z-10 w-full max-w-2xl p-5 sm:p-6 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 dark:text-white shadow-2xl rounded-t-3xl sm:rounded-3xl pb-safe">
+                <div class="flex items-center justify-between pb-3 border-b dark:border-gray-800 mb-3">
+                    <h3 class="text-lg sm:text-xl font-black text-olxDark dark:text-white flex items-center gap-2"><i class="fa-solid fa-heart text-red-500"></i> Saved Ads (<span id="wishlistCountHeader">0</span>)</h3>
+                    <button onclick="toggleWishlistModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div id="wishlistContainer" class="space-y-3 max-h-80 sm:max-h-96 overflow-y-auto divide-y dark:divide-gray-800"></div>
+                <div class="mt-4 pt-3 border-t dark:border-gray-800 flex justify-end">
+                    <button onclick="toggleWishlistModal()" class="w-full sm:w-auto bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-800 dark:text-white px-5 py-2.5 rounded-xl text-sm font-bold">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login / Signup Modal (With Continue with Google) -->
+    <div id="authModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-end sm:items-center justify-center min-h-screen sm:px-4 pt-4 sm:pb-20 text-center">
+            <div class="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm" onclick="toggleAuthModal()"></div>
+            <div class="relative z-10 w-full max-w-md p-5 sm:p-6 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-900 dark:text-white shadow-2xl rounded-t-3xl sm:rounded-3xl pb-safe">
+                <div class="flex items-center justify-between pb-3 border-b dark:border-gray-800 mb-4">
+                    <h3 id="authModalTitle" class="text-lg sm:text-xl font-black text-olxDark dark:text-white">Login to Park Market</h3>
+                    <button onclick="toggleAuthModal()" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+
+                <button type="button" onclick="continueWithGoogle()" class="w-full mb-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2.5 text-sm shadow-sm">
+                    <i class="fa-brands fa-google text-red-500 text-base"></i>
+                    <span>Continue with Google</span>
+                </button>
+
+                <div class="relative flex items-center justify-center my-3">
+                    <div class="border-t border-gray-200 dark:border-gray-800 w-full"></div>
+                    <span class="bg-white dark:bg-gray-900 px-3 text-[11px] font-bold uppercase text-gray-400">or</span>
+                    <div class="border-t border-gray-200 dark:border-gray-800 w-full"></div>
+                </div>
+
+                <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
+                    <div id="nameFieldContainer" class="hidden">
+                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Full Name</label>
+                        <input type="text" id="authName" placeholder="e.g. Muneer Ameen" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Mobile Number or Email</label>
+                        <input type="text" id="authEmailPhone" required placeholder="03128488439 or muneerameen555@gmail.com" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-1">Password</label>
+                        <input type="password" id="authPassword" required placeholder="••••••••" class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:border-olxDark dark:focus:border-olxYellow">
+                    </div>
+                    <button type="submit" id="authSubmitBtn" class="w-full bg-olxDark hover:bg-olxTeal text-white font-bold py-3.5 rounded-xl transition shadow-md">
+                        Login
+                    </button>
+                    <div class="text-center pt-1">
+                        <p id="authToggleText" class="text-xs text-gray-600 dark:text-gray-400">
+                            New to Park Market? <span onclick="switchAuthMode()" class="text-olxDark dark:text-olxYellow font-bold cursor-pointer hover:underline">Create Account</span>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- General Message Box Modal -->
+    <div id="messageBoxModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center">
+            <div class="fixed inset-0 transition-opacity bg-black/50 backdrop-blur-sm" onclick="closeMessageBox()"></div>
+            <div class="relative z-10 inline-block w-full max-w-sm p-6 my-8 overflow-hidden text-center align-middle transition-all transform bg-white dark:bg-gray-900 dark:text-white shadow-2xl rounded-3xl space-y-4">
+                <div class="w-14 h-14 bg-emerald-100 dark:bg-gray-800 text-olxDark dark:text-olxYellow rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3 id="msgBoxTitle" class="text-lg font-black text-gray-900 dark:text-white">Notification</h3>
+                <p id="msgBoxBody" class="text-sm text-gray-600 dark:text-gray-300">Message content goes here.</p>
+                <button onclick="closeMessageBox()" class="w-full bg-olxDark hover:bg-olxTeal text-white font-bold py-3 rounded-xl transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp & Quick Sell Stack -->
+    <div class="fixed bottom-20 md:bottom-5 right-3 sm:right-5 z-40 flex flex-col items-end gap-2.5 sm:gap-3">
+        <div class="hidden md:flex group relative items-center">
+            <span class="absolute right-16 bg-gray-900 text-white text-[11px] font-semibold px-3 py-1.5 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition whitespace-nowrap pointer-events-none">
+                Support on WhatsApp 💬
+            </span>
+            <button onclick="openWhatsAppSupport()" class="bg-emerald-500 hover:bg-emerald-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl transition transform hover:scale-110">
+                <i class="fa-brands fa-whatsapp"></i>
+            </button>
+        </div>
+
+        <button onclick="openPostAdModal()" class="bg-olxYellow hover:brightness-95 active:scale-95 text-olxDark w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-2xl flex items-center justify-center text-lg sm:text-xl transition transform hover:scale-105 font-black" title="Post Free Ad">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+
+    <!-- Mobile App Fixed Bottom Navigation Bar -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-safe transition-colors">
+        <div class="grid grid-cols-5 h-16 items-center text-[10px] font-semibold text-gray-500 dark:text-gray-400">
+            <button onclick="navigateToFolder('home')" class="flex flex-col items-center justify-center gap-1 py-1 text-olxDark dark:text-olxYellow active:scale-95 transition">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span>Home</span>
+            </button>
+            <button onclick="toggleMobileMenu()" class="flex flex-col items-center justify-center gap-1 py-1 hover:text-olxDark dark:hover:text-white active:scale-95 transition">
+                <i class="fa-solid fa-layer-group text-lg"></i>
+                <span>Categories</span>
+            </button>
+            <button onclick="openPostAdModal()" class="flex flex-col items-center justify-center gap-0.5 py-1 active:scale-95 transition">
+                <span class="bg-olxYellow text-olxDark border-2 border-olxDark w-10 h-10 rounded-full flex items-center justify-center font-black text-base shadow">
+                    <i class="fa-solid fa-plus"></i>
+                </span>
+                <span class="font-extrabold text-olxDark dark:text-olxYellow">SELL</span>
+            </button>
+            <button onclick="toggleWishlistModal()" class="relative flex flex-col items-center justify-center gap-1 py-1 hover:text-olxDark dark:hover:text-white active:scale-95 transition">
+                <div class="relative">
+                    <i class="fa-regular fa-heart text-lg text-olxDark dark:text-gray-200"></i>
+                    <span id="mobileWishlistBadge" class="absolute -top-1.5 -right-2.5 bg-red-500 text-white text-[9px] font-bold min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center border border-white dark:border-gray-900">0</span>
+                </div>
+                <span>Saved</span>
+            </button>
+            <button onclick="showMyAds()" class="flex flex-col items-center justify-center gap-1 py-1 hover:text-olxDark dark:hover:text-white active:scale-95 transition">
+                <i class="fa-solid fa-rectangle-list text-lg"></i>
+                <span>My Ads</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        const DEFAULT_WHATSAPP = "923128488439";
+        const STORAGE_KEY_ADS = "parkmarket_ads_v1";
+        const STORAGE_KEY_MY_ADS = "parkmarket_my_ads_v1";
+        const STORAGE_KEY_SAVED = "parkmarket_saved_v1";
+        const STORAGE_KEY_USER = "parkmarket_user_v1";
+        const STORAGE_KEY_THEME = "parkmarket_theme_v1";
+
+        const defaultAds = [
+            {
+                id: 101,
+                title: "iPhone 13 128GB Factory Unlocked PTA Approved",
+                category: "Mobiles",
+                price: 138000,
+                city: "Karachi",
+                area: "Gulshan-e-Iqbal",
+                condition: "Used",
+                featured: true,
+                postedTime: "2 hours ago",
+                seller: "Kamran Siddiqui",
+                phone: "03002233445",
+                image: "https://images.unsplash.com/photo-1632661674596-df8be070a5c5?auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1632661674596-df8be070a5c5?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "10/10 condition iPhone 13 128GB, battery health 89%, PTA approved with box and cable. No repair or open."
+            },
+            {
+                id: 102,
+                title: "Samsung Galaxy A55 5G (8GB/256GB) Official Warranty",
+                category: "Mobiles",
+                price: 104500,
+                city: "Lahore",
+                area: "Johar Town",
+                condition: "Open Box",
+                featured: false,
+                postedTime: "4 hours ago",
+                seller: "Usman Tariq",
+                phone: "03214455667",
+                image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80",
+                images: ["https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"],
+                description: "Barely used Samsung A55 5G with official box, charger, and back cover. Serious buyers only."
+            },
+            {
+                id: 103,
+                title: "Toyota Corolla GLi 1.3 Automatic 2018 Model",
+                category: "Cars & Bikes",
+                price: 3850000,
+                city: "Karachi",
+                area: "Malir Cantt",
+                condition: "Used",
+                featured: true,
+                postedTime: "1 hour ago",
+                seller: "Arif Mahmood",
+                phone: "03331122334",
+                image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=600&q=80",
+                images: ["https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?auto=format&fit=crop&w=600&q=80"],
+                description: "Lahore registered family car, chilled AC, smooth suspension, neat interior, original file available."
+            },
+            {
+                id: 104,
+                title: "Honda CG 125 Self Start 2024 Model",
+                category: "Cars & Bikes",
+                price: 218000,
+                city: "Rawalpindi",
+                area: "Saddar",
+                condition: "Used",
+                featured: false,
+                postedTime: "6 hours ago",
+                seller: "Zainab Raza",
+                phone: "03159988776",
+                image: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80",
+                images: ["https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80"],
+                description: "Well-maintained Honda 125, self start working smoothly, complete documents and smart card ready."
+            },
+            {
+                id: 105,
+                title: "120 Sq Yards Corner House For Sale",
+                category: "Property & Plots",
+                price: 14500000,
+                city: "Karachi",
+                area: "Scheme 33",
+                condition: "New",
+                featured: true,
+                postedTime: "3 hours ago",
+                seller: "Tariq Properties",
+                phone: "03018877665",
+                image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80",
+                images: ["https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80"],
+                description: "Brand new 4-bedroom modern house with sweet water, electricity, gas connection, and wide road."
+            },
+            {
+                id: 106,
+                title: "5 Marla Residential Plot Prime Block",
+                category: "Property & Plots",
+                price: 6200000,
+                city: "Lahore",
+                area: "Bahria Town",
+                condition: "New",
+                featured: false,
+                postedTime: "Yesterday",
+                seller: "Saad Estates",
+                phone: "03457766554",
+                image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80",
+                images: ["https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80"],
+                description: "Possession plot near park and commercial market, clear transfer, ideal for construction or investment."
+            },
+            {
+                id: 107,
+                title: "HP EliteBook 840 G7 Core i5 10th Gen (16GB/512GB)",
+                category: "Electronics",
+                price: 78500,
+                city: "Islamabad",
+                area: "G-11 Markaz",
+                condition: "Used",
+                featured: true,
+                postedTime: "5 hours ago",
+                seller: "Hamza Tech",
+                phone: "03125544332",
+                image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=600&q=80",
+                images: ["https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=600&q=80"],
+                description: "Slim metal body business laptop with backlit keyboard, original charger, and 3+ hours battery backup."
+            },
+            {
+                id: 108,
+                title: "Haier 1.5 Ton DC Inverter Split AC",
+                category: "Electronics",
+                price: 118000,
+                city: "Faisalabad",
+                area: "People's Colony",
+                condition: "Open Box",
+                featured: false,
+                postedTime: "Yesterday",
+                seller: "Danish Electronics",
+                phone: "03026677889",
+                image: "https://images.unsplash.com/photo-1615873968403-89e06c629265?auto=format&fit=crop&w=600&q=80",
+                images: ["https://images.unsplash.com/photo-1615873968403-89e06c629265?auto=format&fit=crop&w=600&q=80"],
+                description: "Fast cooling inverter AC with remote and indoor/outdoor kit. Available for local pickup or delivery."
+            },
+            {
+                id: 109,
+                title: "Designer Embroidered 3-Piece Lawn Suit",
+                category: "Fashion & Lawn",
+                price: 3450,
+                city: "Lahore",
+                area: "Liberty Market",
+                condition: "New",
+                featured: false,
+                postedTime: "2 hours ago",
+                seller: "Ayesha Boutique",
+                phone: "03221199887",
+                image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
+                images: ["https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80"],
+                description: "Fresh unstitched lawn collection with embroidered front, lawn dupatta, and dyed trouser."
+            },
+            {
+                id: 111,
+                title: "5-Seater Modern Fabric L-Shape Sofa Set",
+                category: "Home & Furniture",
+                price: 64000,
+                city: "Karachi",
+                area: "PECHS Block 2",
+                condition: "New",
+                featured: true,
+                postedTime: "5 hours ago",
+                seller: "Casa Furniture",
+                phone: "03009900112",
+                image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80",
+                images: ["https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80"],
+                description: "High-density foam cushions, solid kikar wood frame, and stain-resistant fabric."
+            }
+        ];
+
+        function loadFromStorage(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
+
+        function saveToStorage(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (e) {}
+        }
+
+        let ads = loadFromStorage(STORAGE_KEY_ADS, defaultAds);
+        let myPostedAds = loadFromStorage(STORAGE_KEY_MY_ADS, []);
+        let wishlist = loadFromStorage(STORAGE_KEY_SAVED, []);
+        let savedUser = loadFromStorage(STORAGE_KEY_USER, null);
+        let selectedUploadPhotos = [];
+
+        let currentFolder = "home";
+        let currentAdId = null;
+        let currentSellerName = null;
+        let selectedCity = "All Cities";
+        let isAuthRegistered = false;
+        let showingOnlyMyAds = false;
+        let deferredInstallPrompt = null;
+
+        function dismissSplashScreen() {
+            const splash = document.getElementById("splashScreen");
+            if (!splash || splash.classList.contains("opacity-0")) return;
+            splash.classList.add("opacity-0", "pointer-events-none");
+            setTimeout(() => splash.classList.add("hidden"), 500);
+        }
+
+        function applySavedTheme() {
+            const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || "light";
+            const isDark = savedTheme === "dark";
+            document.documentElement.classList.toggle("dark", isDark);
+            updateThemeIcons(isDark);
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle("dark");
+            localStorage.setItem(STORAGE_KEY_THEME, isDark ? "dark" : "light");
+            updateThemeIcons(isDark);
+            showToast(isDark ? "Dark Mode enabled" : "Light Mode enabled");
+        }
+
+        function updateThemeIcons(isDark) {
+            const desktopIcon = document.getElementById("themeIconDesktop");
+            const mobileIcon = document.getElementById("themeIconMobile");
+            [desktopIcon, mobileIcon].forEach(icon => {
+                if (!icon) return;
+                icon.classList.toggle("fa-moon", !isDark);
+                icon.classList.toggle("fa-sun", isDark);
+            });
+        }
+
+        function toSlug(text) {
+            return String(text || "").toLowerCase().replace(/[^a-z0-9&]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+
+        function setupPWA() {
+            const svgIcon = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#002f34"/><text x="96" y="108" font-family="Arial,sans-serif" font-size="44" font-weight="900" fill="#ffce32" text-anchor="middle">PARK</text><text x="96" y="148" font-family="Arial,sans-serif" font-size="30" font-weight="800" fill="#ffffff" text-anchor="middle">MARKET</text></svg>`);
+            const iconUrl = `data:image/svg+xml,${svgIcon}`;
+
+            const manifestData = {
+                name: "Park Market Pakistan",
+                short_name: "Park Market",
+                start_url: "./",
+                scope: "./",
+                display: "standalone",
+                background_color: "#002f34",
+                theme_color: "#002f34",
+                orientation: "portrait",
+                icons: [
+                    { src: iconUrl, sizes: "192x192", type: "image/svg+xml", purpose: "any" },
+                    { src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+                ]
+            };
+
+            try {
+                const blob = new Blob([JSON.stringify(manifestData)], { type: "application/manifest+json" });
+                const manifestUrl = URL.createObjectURL(blob);
+                const linkEl = document.getElementById("pwaManifestLink");
+                if (linkEl) linkEl.href = manifestUrl;
+            } catch (e) {}
+
+            if ("serviceWorker" in navigator && (window.location.protocol === "https:" || window.location.hostname === "localhost")) {
+                const swCode = `
+                    const CACHE_NAME = 'parkmarket-pwa-v1';
+                    self.addEventListener('install', (event) => {
+                        self.skipWaiting();
+                    });
+                    self.addEventListener('activate', (event) => {
+                        event.waitUntil(self.clients.claim());
+                    });
+                    self.addEventListener('fetch', (event) => {
+                        if (event.request.method !== 'GET') return;
+                        event.respondWith(
+                            fetch(event.request).catch(() => caches.match(event.request))
+                        );
+                    });
+                `;
+                try {
+                    const swBlob = new Blob([swCode], { type: "application/javascript" });
+                    const swUrl = URL.createObjectURL(swBlob);
+                    navigator.serviceWorker.register(swUrl).catch(() => {});
+                } catch (e) {}
+            }
+        }
+
+        window.addEventListener("beforeinstallprompt", (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            document.getElementById("topInstallBtn")?.classList.remove("hidden");
+            document.getElementById("topInstallBtn")?.classList.add("inline-flex");
+            document.getElementById("desktopInstallBtn")?.classList.remove("hidden");
+        });
+
+        async function triggerInstallPrompt() {
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                await deferredInstallPrompt.userChoice;
+                deferredInstallPrompt = null;
+            } else {
+                showMessageBox(
+                    "Install Park Market App",
+                    "Browser menu se 'Install App' ya 'Add to Home Screen' select karein. Play Store (.aab) ke liye apna live HTTPS URL PWABuilder par daalein."
+                );
+            }
+        }
+
+        window.onload = function() {
+            applySavedTheme();
+            setupPWA();
+            if (savedUser) {
+                document.getElementById('authButtonText').innerText = savedUser;
+                const mobAuth = document.getElementById('mobileAuthLabel');
+                if (mobAuth) mobAuth.innerText = savedUser;
+            }
+            syncFromHash(false);
+            updateBadges();
+            setTimeout(dismissSplashScreen, 1450);
+        };
+
+        window.addEventListener('popstate', function() {
+            syncFromHash(false);
+        });
+
+        function setActiveViewPanel(panelName) {
+            document.getElementById('catalogViewWrapper').classList.toggle('hidden', panelName !== 'catalog');
+            document.getElementById('adFolderView').classList.toggle('hidden', panelName !== 'ad');
+            document.getElementById('sellerProfileView').classList.toggle('hidden', panelName !== 'seller');
+        }
+
+        function syncFromHash(pushHistory = false) {
+            const rawHash = window.location.hash.replace(/^#/, '');
+            if (!rawHash || rawHash === 'home' || rawHash === 'catalog') {
+                renderCategoryFolder('home', pushHistory);
+                return;
+            }
+
+            if (rawHash.startsWith('seller/')) {
+                const sellerSlug = rawHash.replace('seller/', '');
+                const matchedAd = ads.find(a => toSlug(a.seller) === sellerSlug);
+                if (matchedAd) {
+                    renderSellerProfile(matchedAd.seller, pushHistory);
+                    return;
+                }
+            }
+
+            if (rawHash.includes('/')) {
+                const parts = rawHash.split('/');
+                const adId = parseInt(parts[1].split('-')[0], 10);
+                const foundAd = ads.find(a => a.id === adId);
+                if (foundAd) {
+                    renderAdSubFolder(foundAd, pushHistory);
+                    return;
+                }
+            }
+
+            const matchedCategory = ads.find(a => toSlug(a.category) === rawHash);
+            if (matchedCategory) {
+                renderCategoryFolder(matchedCategory.category, pushHistory);
+            } else {
+                renderCategoryFolder('home', pushHistory);
+            }
+        }
+
+        function navigateToFolder(folderName) {
+            showingOnlyMyAds = false;
+            const target = (!folderName || folderName === 'All') ? 'home' : folderName;
+            renderCategoryFolder(target, true);
+        }
+
+        function renderCategoryFolder(folderName, pushHistory = true) {
+            currentFolder = folderName;
+            currentAdId = null;
+            currentSellerName = null;
+
+            const isHome = folderName === 'home';
+            const slug = isHome ? 'home' : toSlug(folderName);
+
+            if (pushHistory) {
+                try {
+                    history.pushState({ folder: folderName, adId: null, seller: null }, '', '#' + slug);
+                } catch (e) {
+                    window.location.hash = slug;
+                }
+            }
+
+            setActiveViewPanel('catalog');
+            document.getElementById('heroSection').classList.toggle('hidden', !isHome);
+
+            const catSelect = document.getElementById('categoryFilter');
+            if (catSelect) catSelect.value = isHome ? 'home' : folderName;
+            updateActiveMobilePill(folderName);
+
+            document.getElementById('folderPathText').innerText = `/park-market/${slug}`;
+            document.getElementById('catalogFolderTitle').innerText = isHome ? 'Fresh Recommendations' : `${folderName} Ads`;
+
+            const breadcrumb = document.getElementById('breadcrumbTrail');
+            if (isHome) {
+                breadcrumb.innerHTML = `<span class="text-olxDark dark:text-olxYellow font-extrabold">Home</span>`;
+            } else {
+                breadcrumb.innerHTML = `
+                    <span class="cursor-pointer hover:underline text-gray-500" onclick="navigateToFolder('home')">Home</span>
+                    <span class="text-gray-400">/</span>
+                    <span class="text-olxDark dark:text-olxYellow font-extrabold">${folderName}</span>
+                `;
+            }
+
+            applyAdFilters();
+
+            if (!isHome) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function openAdFolder(adId) {
+            const ad = ads.find(a => a.id === adId);
+            if (!ad) return;
+            renderAdSubFolder(ad, true);
+        }
+
+        function switchDetailPhoto(imgSrc, thumbEl) {
+            const mainImg = document.getElementById("adMainDetailImg");
+            if (mainImg) mainImg.src = imgSrc;
+            document.querySelectorAll(".detail-thumb").forEach(el => {
+                el.classList.remove("ring-2", "ring-olxYellow");
+            });
+            if (thumbEl) thumbEl.classList.add("ring-2", "ring-olxYellow");
+        }
+
+        function renderAdSubFolder(ad, pushHistory = true) {
+            currentFolder = ad.category;
+            currentAdId = ad.id;
+            currentSellerName = null;
+
+            const catSlug = toSlug(ad.category);
+            const adSlug = `${ad.id}-${toSlug(ad.title)}`;
+            const fullSlug = `${catSlug}/${adSlug}`;
+
+            if (pushHistory) {
+                try {
+                    history.pushState({ folder: ad.category, adId: ad.id, seller: null }, '', '#' + fullSlug);
+                } catch (e) {
+                    window.location.hash = fullSlug;
+                }
+            }
+
+            document.getElementById('heroSection').classList.add('hidden');
+            setActiveViewPanel('ad');
+
+            document.getElementById('folderPathText').innerText = `/park-market/${fullSlug}`;
+            document.getElementById('adFolderSlugBadge').innerText = `/park-market/${fullSlug}`;
+            updateActiveMobilePill(ad.category);
+
+            const breadcrumb = document.getElementById('breadcrumbTrail');
+            breadcrumb.innerHTML = `
+                <span class="cursor-pointer hover:underline text-gray-500" onclick="navigateToFolder('home')">Home</span>
+                <span class="text-gray-400">/</span>
+                <span class="cursor-pointer hover:underline text-gray-600 dark:text-gray-300" onclick="navigateToFolder('${ad.category}')">${ad.category}</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-olxDark dark:text-olxYellow font-extrabold truncate max-w-[140px] sm:max-w-xs">${ad.title}</span>
+            `;
+
+            const isSaved = wishlist.some(item => item.id === ad.id);
+            const gallery = (ad.images && ad.images.length > 0) ? ad.images : [ad.image];
+            const sellerAdsCount = ads.filter(item => item.seller === ad.seller).length;
+
+            const thumbsHtml = gallery.length > 1 ? `
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pt-2.5">
+                    ${gallery.map((src, idx) => `
+                        <img src="${src}" onclick="switchDetailPhoto('${src}', this)" onerror="this.src='https://placehold.co/150x120/002f34/ffce32?text=Photo'" class="detail-thumb w-16 h-14 sm:w-20 sm:h-16 object-cover rounded-xl cursor-pointer border border-gray-200 dark:border-gray-700 shrink-0 ${idx === 0 ? 'ring-2 ring-olxYellow' : ''}">
+                    `).join('')}
+                </div>
+            ` : '';
+
+            const detailContainer = document.getElementById('adDetailContent');
+            detailContainer.innerHTML = `
+                <div class="lg:col-span-7 flex flex-col">
+                    <div class="relative bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden h-64 sm:h-96 flex items-center justify-center">
+                        <img id="adMainDetailImg" src="${gallery[0]}" alt="${ad.title}" onerror="this.src='https://placehold.co/700x500/002f34/ffce32?text=Park+Market'" class="w-full h-full object-cover">
+                        ${ad.featured ? `<span class="absolute top-3 left-3 bg-olxYellow text-olxDark text-xs font-black px-3 py-1 rounded-md uppercase shadow">Featured</span>` : ''}
+                        <span class="absolute bottom-3 left-3 bg-olxDark/90 text-white text-xs font-bold px-3 py-1 rounded-lg">${ad.condition}</span>
+                        ${gallery.length > 1 ? `<span class="absolute bottom-3 right-3 bg-black/70 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg"><i class="fa-solid fa-images mr-1"></i>${gallery.length} Photos</span>` : ''}
+                    </div>
+                    ${thumbsHtml}
+                </div>
+
+                <div class="lg:col-span-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-bold text-olxDark dark:text-olxYellow bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg">${ad.category} • ${ad.condition}</span>
+                            <button onclick="toggleWishlist(${ad.id}); renderAdSubFolder(ads.find(a => a.id === ${ad.id}), false);" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-red-50 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-red-500 transition">
+                                <i class="${isSaved ? 'fa-solid text-red-500' : 'fa-regular'} fa-heart text-base"></i>
+                            </button>
+                        </div>
+
+                        <div class="text-2xl sm:text-3xl font-black text-olxDark dark:text-olxYellow">Rs. ${Number(ad.price).toLocaleString()}</div>
+                        <h1 class="text-lg sm:text-2xl font-extrabold text-gray-900 dark:text-white leading-snug">${ad.title}</h1>
+
+                        <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 border-y dark:border-gray-800 py-2.5">
+                            <span><i class="fa-solid fa-location-dot text-olxDark dark:text-olxYellow mr-1"></i> ${ad.area}, ${ad.city}</span>
+                            <span><i class="fa-regular fa-clock mr-1"></i> ${ad.postedTime}</span>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-1">Description</h3>
+                            <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">${ad.description}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 dark:bg-gray-800/80 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase text-gray-400 block">Listed By</span>
+                                <button onclick="openSellerProfile('${ad.seller.replace(/'/g, "\\'")}')" class="font-extrabold text-sm text-olxDark dark:text-olxYellow hover:underline flex items-center gap-1.5 text-left">
+                                    <span>${ad.seller}</span>
+                                    <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400">(${sellerAdsCount} ad${sellerAdsCount > 1 ? 's' : ''}) &rarr;</span>
+                                </button>
+                            </div>
+                            <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-200 dark:border-emerald-800 shrink-0">
+                                <i class="fa-solid fa-user-check"></i> Active Seller
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <button onclick="showSellerPhone('${ad.seller.replace(/'/g, "\\'")}', '${ad.phone}')" class="w-full bg-olxDark hover:bg-olxTeal active:scale-95 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+                                <i class="fa-solid fa-phone"></i> Show Number
+                            </button>
+                            <button onclick="chatSellerOnWhatsApp(${ad.id})" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+                                <i class="fa-brands fa-whatsapp text-base"></i> WhatsApp Chat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const related = ads.filter(item => item.category === ad.category && item.id !== ad.id);
+            const relatedGrid = document.getElementById('relatedAdsGrid');
+            relatedGrid.innerHTML = '';
+            related.forEach(item => {
+                relatedGrid.appendChild(createAdCardElement(item));
+            });
+
+            document.getElementById('viewAllCategoryBtn').onclick = () => navigateToFolder(ad.category);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Seller Profile View
+        function openSellerProfile(sellerName) {
+            if (!sellerName) return;
+            renderSellerProfile(sellerName, true);
+        }
+
+        function renderSellerProfile(sellerName, pushHistory = true) {
+            currentSellerName = sellerName;
+            currentAdId = null;
+
+            const sellerSlug = `seller/${toSlug(sellerName)}`;
+            if (pushHistory) {
+                try {
+                    history.pushState({ folder: currentFolder, adId: null, seller: sellerName }, '', '#' + sellerSlug);
+                } catch (e) {
+                    window.location.hash = sellerSlug;
+                }
+            }
+
+            document.getElementById('heroSection').classList.add('hidden');
+            setActiveViewPanel('seller');
+
+            document.getElementById('folderPathText').innerText = `/park-market/${sellerSlug}`;
+            document.getElementById('sellerSlugBadge').innerText = `/park-market/${sellerSlug}`;
+
+            const sellerAds = ads.filter(a => a.seller === sellerName);
+            const primaryCity = sellerAds[0]?.city || "Pakistan";
+            const primaryPhone = sellerAds[0]?.phone || DEFAULT_WHATSAPP;
+            const cleanPhone = primaryPhone.replace(/\D/g, '').replace(/^0/, '92');
+
+            const breadcrumb = document.getElementById('breadcrumbTrail');
+            breadcrumb.innerHTML = `
+                <span class="cursor-pointer hover:underline text-gray-500" onclick="navigateToFolder('home')">Home</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-gray-500">Seller</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-olxDark dark:text-olxYellow font-extrabold">${sellerName}</span>
+            `;
+
+            document.getElementById('sellerProfileCard').innerHTML = `
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-olxDark text-olxYellow flex items-center justify-center text-2xl font-black shrink-0 shadow">
+                        ${sellerName.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full">
+                            Verified Seller Profile
+                        </span>
+                        <h2 class="text-xl sm:text-2xl font-black text-olxDark dark:text-white mt-1">${sellerName}</h2>
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                            <i class="fa-solid fa-location-dot mr-1"></i> ${primaryCity} • <strong>${sellerAds.length}</strong> Active Listing${sellerAds.length === 1 ? '' : 's'}
+                        </p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                    <button onclick="showSellerPhone('${sellerName.replace(/'/g, "\\'")}', '${primaryPhone}')" class="flex-1 md:flex-initial bg-olxDark hover:bg-olxTeal text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-phone"></i> Show Number
+                    </button>
+                    <a href="https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Assalam-o-Alaikum ${sellerName}! Maine aapki Park Market seller profile dekhi hai.`)}" target="_blank" class="flex-1 md:flex-initial bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-base"></i> WhatsApp
+                    </a>
+                </div>
+            `;
+
+            document.getElementById('sellerAdsHeading').innerText = `Ads by ${sellerName} (${sellerAds.length})`;
+            const sellerGrid = document.getElementById('sellerAdsGrid');
+            sellerGrid.innerHTML = '';
+            sellerAds.forEach(item => sellerGrid.appendChild(createAdCardElement(item)));
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handleBrowserBack() {
+            if (window.history.length > 1 && window.location.hash && window.location.hash !== '#home') {
+                window.history.back();
+            } else if (currentSellerName !== null || currentAdId !== null) {
+                navigateToFolder(currentFolder);
+            } else if (currentFolder !== 'home') {
+                navigateToFolder('home');
+            } else {
+                showToast("You are already on the Home feed.");
+            }
+        }
+
+        function updateActiveMobilePill(activeFolder) {
+            const pills = document.querySelectorAll('.mobile-pill');
+            pills.forEach(pill => {
+                const target = pill.getAttribute('data-folder');
+                if (target === activeFolder) {
+                    pill.classList.remove('bg-white/15', 'text-white');
+                    pill.classList.add('bg-olxYellow', 'text-olxDark', 'font-extrabold');
+                } else {
+                    pill.classList.remove('bg-olxYellow', 'text-olxDark', 'font-extrabold');
+                    pill.classList.add('bg-white/15', 'text-white');
+                }
+            });
+        }
+
+        function createAdCardElement(ad) {
+            const isSaved = wishlist.some(item => item.id === ad.id);
+            const isMyAd = myPostedAds.some(item => item.id === ad.id);
+            const photoCount = (ad.images && ad.images.length > 1) ? ad.images.length : 0;
+
+            const card = document.createElement('div');
+            card.className = "bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-800 flex flex-col justify-between overflow-hidden group";
+            card.innerHTML = `
+                <div onclick="openAdFolder(${ad.id})" class="cursor-pointer relative overflow-hidden bg-gray-100 dark:bg-gray-800 h-36 sm:h-44">
+                    <img src="${ad.image}" alt="${ad.title}" onerror="this.src='https://placehold.co/400x300/002f34/ffce32?text=Park+Market'" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    ${ad.featured ? `<span class="absolute top-2 left-2 bg-olxYellow text-olxDark text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wide shadow-sm">Featured</span>` : `<span class="absolute top-2 left-2 bg-black/65 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded">${ad.condition}</span>`}
+                    ${photoCount > 0 ? `<span class="absolute bottom-2 left-2 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded"><i class="fa-solid fa-images mr-1"></i>${photoCount}</span>` : ''}
+                    <button onclick="event.stopPropagation(); toggleWishlist(${ad.id})" class="absolute top-2 right-2 w-8 h-8 bg-white/95 dark:bg-gray-900/90 rounded-full flex items-center justify-center shadow text-olxDark dark:text-gray-200 hover:text-red-500 active:scale-90 transition">
+                        <i class="${isSaved ? 'fa-solid text-red-500' : 'fa-regular'} fa-heart text-xs sm:text-sm"></i>
+                    </button>
+                </div>
+                <div class="p-3 flex flex-col justify-between flex-1">
+                    <div onclick="openAdFolder(${ad.id})" class="cursor-pointer">
+                        <div class="text-sm sm:text-lg font-black text-olxDark dark:text-olxYellow leading-tight">Rs. ${Number(ad.price).toLocaleString()}</div>
+                        <h3 class="font-semibold text-gray-800 dark:text-gray-100 text-xs sm:text-sm mt-1 line-clamp-2 group-hover:text-olxTeal transition leading-snug">${ad.title}</h3>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400">
+                        <button onclick="openSellerProfile('${ad.seller.replace(/'/g, "\\'")}')" class="truncate hover:underline font-semibold text-olxDark dark:text-gray-300 text-left">
+                            <i class="fa-solid fa-user mr-1 text-gray-400"></i>${ad.seller}
+                        </button>
+                    </div>
+                    <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400">
+                        <span class="truncate font-medium"><i class="fa-solid fa-location-dot text-gray-400 mr-1"></i>${ad.area ? ad.area + ', ' : ''}${ad.city}</span>
+                        ${isMyAd && showingOnlyMyAds
+                            ? `<button onclick="event.stopPropagation(); deleteMyAd(${ad.id})" class="text-red-500 hover:text-red-700 font-bold shrink-0 ml-1"><i class="fa-solid fa-trash"></i> Delete</button>`
+                            : `<span class="shrink-0 ml-1 text-gray-400">${ad.postedTime}</span>`
+                        }
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function renderAds(list) {
+            const grid = document.getElementById('adsGrid');
+            const emptyState = document.getElementById('emptyState');
+            grid.innerHTML = '';
+
+            if (list.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            list.forEach(ad => {
+                grid.appendChild(createAdCardElement(ad));
+            });
+        }
+
+        function applyAdFilters() {
+            const desktopQ = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const mobileQ = (document.getElementById('searchInputMobile')?.value || '').toLowerCase();
+            const query = (desktopQ || mobileQ).trim();
+
+            const conditionVal = document.getElementById('conditionFilter')?.value || 'All';
+            const sortVal = document.getElementById('sortBy')?.value || 'featured';
+            const minPriceRaw = document.getElementById('minPriceInput')?.value;
+            const maxPriceRaw = document.getElementById('maxPriceInput')?.value;
+            const minPrice = minPriceRaw !== '' && minPriceRaw !== undefined ? Number(minPriceRaw) : null;
+            const maxPrice = maxPriceRaw !== '' && maxPriceRaw !== undefined ? Number(maxPriceRaw) : null;
+
+            let baseList = showingOnlyMyAds ? [...myPostedAds] : [...ads];
+
+            if (!showingOnlyMyAds && currentFolder !== 'home') {
+                baseList = baseList.filter(a => a.category === currentFolder);
+            }
+
+            if (selectedCity !== 'All Cities') {
+                baseList = baseList.filter(a => a.city === selectedCity);
+            }
+
+            if (conditionVal !== 'All') {
+                baseList = baseList.filter(a => a.condition === conditionVal);
+            }
+
+            if (minPrice !== null && !Number.isNaN(minPrice)) {
+                baseList = baseList.filter(a => Number(a.price) >= minPrice);
+            }
+
+            if (maxPrice !== null && !Number.isNaN(maxPrice) && maxPrice > 0) {
+                baseList = baseList.filter(a => Number(a.price) <= maxPrice);
+            }
+
+            if (query) {
+                baseList = baseList.filter(a =>
+                    a.title.toLowerCase().includes(query) ||
+                    a.category.toLowerCase().includes(query) ||
+                    a.city.toLowerCase().includes(query) ||
+                    a.seller.toLowerCase().includes(query) ||
+                    (a.area && a.area.toLowerCase().includes(query)) ||
+                    a.description.toLowerCase().includes(query)
+                );
+            }
+
+            if (sortVal === 'low-high') {
+                baseList.sort((a, b) => a.price - b.price);
+            } else if (sortVal === 'high-low') {
+                baseList.sort((a, b) => b.price - a.price);
+            } else {
+                baseList.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || b.id - a.id);
+            }
+
+            renderAds(baseList);
+        }
+
+        function syncCityFilter(city) {
+            selectedCity = city;
+            const dSelect = document.getElementById('cityFilterDesktop');
+            const mSelect = document.getElementById('cityFilterMobile');
+            if (dSelect) dSelect.value = city;
+            if (mSelect) mSelect.value = city;
+            if (currentAdId !== null || currentSellerName !== null) renderCategoryFolder(currentFolder, true);
+            else applyAdFilters();
+        }
+
+        function filterAds() {
+            const val = document.getElementById('searchInput').value;
+            const mobileInput = document.getElementById('searchInputMobile');
+            if (mobileInput) mobileInput.value = val;
+            if (currentAdId !== null || currentSellerName !== null) renderCategoryFolder(currentFolder, true);
+            else applyAdFilters();
+        }
+
+        function filterAdsMobile() {
+            const val = document.getElementById('searchInputMobile').value;
+            const desktopInput = document.getElementById('searchInput');
+            if (desktopInput) desktopInput.value = val;
+            if (currentAdId !== null || currentSellerName !== null) renderCategoryFolder(currentFolder, true);
+            else applyAdFilters();
+        }
+
+        function resetFilters() {
+            selectedCity = 'All Cities';
+            showingOnlyMyAds = false;
+            const dSelect = document.getElementById('cityFilterDesktop');
+            const mSelect = document.getElementById('cityFilterMobile');
+            const condSelect = document.getElementById('conditionFilter');
+            const sortSelect = document.getElementById('sortBy');
+            const minInput = document.getElementById('minPriceInput');
+            const maxInput = document.getElementById('maxPriceInput');
+            const dSearch = document.getElementById('searchInput');
+            const mSearch = document.getElementById('searchInputMobile');
+
+            if (dSelect) dSelect.value = 'All Cities';
+            if (mSelect) mSelect.value = 'All Cities';
+            if (condSelect) condSelect.value = 'All';
+            if (sortSelect) sortSelect.value = 'featured';
+            if (minInput) minInput.value = '';
+            if (maxInput) maxInput.value = '';
+            if (dSearch) dSearch.value = '';
+            if (mSearch) mSearch.value = '';
+
+            navigateToFolder('home');
+        }
+
+        function handleMultiImageSelect(input) {
+            const files = Array.from(input.files || []);
+            if (files.length === 0) return;
+
+            if (files.length > 10) {
+                showMessageBox("Photo Limit (Max 10)", "Aap ek ad mein maximum 10 photos upload kar saktay hain. Pehli 10 photos select ki gayi hain.");
+            } else if (files.length < 5) {
+                showToast(`Selected ${files.length} photo(s). Aap 5 se 10 photos upload kar saktay hain.`);
+            }
+
+            const cappedFiles = files.slice(0, 10);
+            selectedUploadPhotos = [];
+            const previewGrid = document.getElementById("imagePreviewGrid");
+            const countLabel = document.getElementById("photoCountLabel");
+            previewGrid.innerHTML = "";
+
+            let processed = 0;
+            cappedFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedUploadPhotos.push(e.target.result);
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.className = "w-full h-14 object-cover rounded-lg border border-gray-300 dark:border-gray-600";
+                    previewGrid.appendChild(img);
+
+                    processed++;
+                    if (countLabel) {
+                        countLabel.innerText = `${selectedUploadPhotos.length} / 10 selected`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function openPostAdModal() {
+            selectedUploadPhotos = [];
+            const previewGrid = document.getElementById("imagePreviewGrid");
+            const countLabel = document.getElementById("photoCountLabel");
+            if (previewGrid) previewGrid.innerHTML = "";
+            if (countLabel) countLabel.innerText = "0 / 10 selected";
+            document.getElementById('postAdModal').classList.remove('hidden');
+        }
+
+        function closePostAdModal() {
+            document.getElementById('postAdModal').classList.add('hidden');
+        }
+
+        function handlePostAdSubmit(event) {
+            event.preventDefault();
+            const title = document.getElementById('adTitle').value.trim();
+            const category = document.getElementById('adCategory').value;
+            const city = document.getElementById('adCity').value;
+            const price = parseInt(document.getElementById('adPrice').value, 10);
+            const condition = document.getElementById('adCondition').value;
+            const seller = document.getElementById('adSeller').value.trim();
+            const phone = document.getElementById('adPhone').value.trim();
+            const customImg = document.getElementById('adImage').value.trim();
+            const description = document.getElementById('adDescription').value.trim();
+
+            const fallbackImages = {
+                "Mobiles": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80",
+                "Cars & Bikes": "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=600&q=80",
+                "Property & Plots": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=600&q=80",
+                "Electronics": "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80",
+                "Fashion & Lawn": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=600&q=80",
+                "Home & Furniture": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80"
+            };
+
+            let photosList = [...selectedUploadPhotos];
+            if (customImg) {
+                photosList.unshift(customImg);
+            }
+            if (photosList.length === 0) {
+                photosList = [fallbackImages[category] || fallbackImages["Electronics"]];
+            }
+
+            const newAd = {
+                id: Date.now(),
+                title,
+                category,
+                price,
+                city,
+                area: "City Center",
+                condition,
+                featured: true,
+                postedTime: "Just now",
+                seller,
+                phone,
+                image: photosList[0],
+                images: photosList,
+                description
+            };
+
+            ads.unshift(newAd);
+            myPostedAds.unshift(newAd);
+            saveToStorage(STORAGE_KEY_ADS, ads);
+            saveToStorage(STORAGE_KEY_MY_ADS, myPostedAds);
+            updateBadges();
+
+            document.getElementById('postAdForm').reset();
+            selectedUploadPhotos = [];
+            closePostAdModal();
+
+            showingOnlyMyAds = false;
+            renderCategoryFolder('home', true);
+            showMessageBox('Ad Published! 🎉', `"${title}" (${photosList.length} photo${photosList.length > 1 ? 's' : ''}) is now live on Park Market in ${city}.`);
+        }
+
+        function deleteMyAd(adId) {
+            myPostedAds = myPostedAds.filter(a => a.id !== adId);
+            ads = ads.filter(a => a.id !== adId);
+            wishlist = wishlist.filter(a => a.id !== adId);
+            saveToStorage(STORAGE_KEY_MY_ADS, myPostedAds);
+            saveToStorage(STORAGE_KEY_ADS, ads);
+            saveToStorage(STORAGE_KEY_SAVED, wishlist);
+            updateBadges();
+            document.getElementById('catalogFolderTitle').innerText = `My Posted Ads (${myPostedAds.length})`;
+            applyAdFilters();
+            showToast("Ad deleted.");
+        }
+
+        function showMyAds() {
+            showingOnlyMyAds = true;
+            currentAdId = null;
+            currentSellerName = null;
+            document.getElementById('heroSection').classList.add('hidden');
+            setActiveViewPanel('catalog');
+            document.getElementById('catalogFolderTitle').innerText = `My Posted Ads (${myPostedAds.length})`;
+            document.getElementById('breadcrumbTrail').innerHTML = `
+                <span class="cursor-pointer hover:underline text-gray-500" onclick="navigateToFolder('home')">Home</span>
+                <span class="text-gray-400">/</span>
+                <span class="text-olxDark dark:text-olxYellow font-extrabold">My Ads</span>
+            `;
+            applyAdFilters();
+        }
+
+        function toggleWishlist(adId) {
+            const ad = ads.find(item => item.id === adId);
+            if (!ad) return;
+            const index = wishlist.findIndex(item => item.id === adId);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                showToast("Removed from Saved Ads");
+            } else {
+                wishlist.push(ad);
+                showToast("Saved to your favorites!");
+            }
+            saveToStorage(STORAGE_KEY_SAVED, wishlist);
+            updateBadges();
+            if (currentAdId === null && currentSellerName === null) {
+                applyAdFilters();
+            } else if (currentSellerName !== null) {
+                renderSellerProfile(currentSellerName, false);
+            }
+            renderWishlistItems();
+        }
+
+        function renderWishlistItems() {
+            const container = document.getElementById('wishlistContainer');
+            container.innerHTML = '';
+            document.getElementById('wishlistCountHeader').innerText = wishlist.length;
+
+            if (wishlist.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-400 py-8 text-sm">No saved ads yet.</p>`;
+                return;
+            }
+
+            wishlist.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between pt-3 gap-2";
+                div.innerHTML = `
+                    <div onclick="toggleWishlistModal(); openAdFolder(${item.id});" class="flex items-center gap-3 min-w-0 cursor-pointer">
+                        <img src="${item.image}" class="w-14 h-14 object-cover rounded-xl bg-gray-100 shrink-0">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-xs text-gray-900 dark:text-white truncate">${item.title}</h4>
+                            <span class="text-xs text-olxDark dark:text-olxYellow font-black">Rs. ${Number(item.price).toLocaleString()}</span>
+                            <span class="block text-[10px] text-gray-400">${item.city}</span>
+                        </div>
+                    </div>
+                    <button onclick="toggleWishlist(${item.id})" class="text-red-500 p-2 shrink-0"><i class="fa-solid fa-trash-can"></i></button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleWishlistModal() {
+            document.getElementById('wishlistModal').classList.toggle('hidden');
+            renderWishlistItems();
+        }
+
+        function updateBadges() {
+            document.getElementById('wishlistBadge').innerText = wishlist.length;
+            const mobBadge = document.getElementById('mobileWishlistBadge');
+            if (mobBadge) mobBadge.innerText = wishlist.length;
+            const myAdsEl = document.getElementById('myAdsCount');
+            if (myAdsEl) myAdsEl.innerText = myPostedAds.length;
+        }
+
+        function showSellerPhone(seller, phone) {
+            showMessageBox(`Seller Contact: ${seller}`, `Call or WhatsApp at: ${phone}`);
+        }
+
+        function chatSellerOnWhatsApp(adId) {
+            const ad = ads.find(a => a.id === adId);
+            if (!ad) return;
+            const cleanPhone = (ad.phone || DEFAULT_WHATSAPP).replace(/\D/g, '').replace(/^0/, '92');
+            const msg = `Assalam-o-Alaikum ${ad.seller}! Maine aapka ad "${ad.title}" (Rs. ${Number(ad.price).toLocaleString()}) Park Market par dekha hai. Kya yeh abhi available hai?`;
+            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function openWhatsAppSupport() {
+            const msg = encodeURIComponent("Assalam-o-Alaikum Park Market 🇵🇰! Mujhe ad posting ya app ke baray mein madad chahiye.");
+            window.open(`https://wa.me/${DEFAULT_WHATSAPP}?text=${msg}`, '_blank');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('mobileMenuIcon');
+            if (!menu) return;
+            menu.classList.toggle('hidden');
+            if (icon) {
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-xmark');
+            }
+        }
+
+        function toggleAuthModal() {
+            document.getElementById('authModal').classList.toggle('hidden');
+        }
+
+        function switchAuthMode() {
+            isAuthRegistered = !isAuthRegistered;
+            const title = document.getElementById('authModalTitle');
+            const nameContainer = document.getElementById('nameFieldContainer');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const toggleText = document.getElementById('authToggleText');
+
+            if (isAuthRegistered) {
+                title.innerText = "Create Park Market Account";
+                nameContainer.classList.remove('hidden');
+                submitBtn.innerText = "Register";
+                toggleText.innerHTML = `Already registered? <span onclick="switchAuthMode()" class="text-olxDark dark:text-olxYellow font-bold cursor-pointer hover:underline">Login</span>`;
+            } else {
+                title.innerText = "Login to Park Market";
+                nameContainer.classList.add('hidden');
+                submitBtn.innerText = "Login";
+                toggleText.innerHTML = `New to Park Market? <span onclick="switchAuthMode()" class="text-olxDark dark:text-olxYellow font-bold cursor-pointer hover:underline">Create Account</span>`;
+            }
+        }
+
+        function continueWithGoogle() {
+            const googleName = "Google User";
+            savedUser = googleName;
+            saveToStorage(STORAGE_KEY_USER, googleName);
+            document.getElementById('authButtonText').innerText = googleName;
+            const mobAuth = document.getElementById('mobileAuthLabel');
+            if (mobAuth) mobAuth.innerText = googleName;
+            toggleAuthModal();
+            showMessageBox("Signed in with Google", "Aapka Park Market account Google ke sath connect ho gaya hai.");
+        }
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            const customName = document.getElementById('authName')?.value.trim();
+            const identifier = document.getElementById('authEmailPhone').value.trim();
+            const displayName = customName || identifier.split('@')[0];
+            savedUser = displayName;
+            saveToStorage(STORAGE_KEY_USER, displayName);
+            toggleAuthModal();
+            document.getElementById('authButtonText').innerText = displayName;
+            const mobAuth = document.getElementById('mobileAuthLabel');
+            if (mobAuth) mobAuth.innerText = displayName;
+            showMessageBox('Welcome to Park Market!', isAuthRegistered ? 'Account created successfully.' : 'You are now logged in.');
+        }
+
+        function showMessageBox(title, body) {
+            document.getElementById('msgBoxTitle').innerText = title;
+            document.getElementById('msgBoxBody').innerText = body;
+            document.getElementById('messageBoxModal').classList.remove('hidden');
+        }
+
+        function closeMessageBox() {
+            document.getElementById('messageBoxModal').classList.add('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-20 md:bottom-5 left-3 right-3 sm:right-auto sm:left-5 z-50 bg-olxDark text-white px-4 py-3 rounded-2xl text-xs font-bold shadow-2xl text-center sm:text-left";
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2400);
+        }
+    </script>
+</body>
+</html>        
